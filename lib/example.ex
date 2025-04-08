@@ -125,11 +125,33 @@ defmodule Example do
       {"a",:Gold},
       {"b",:Silver},
       {"c",:Diamond},
-      {'D',:Gold}
+      {"D",:Gold}
     ]
 
     Enum.each(users,  fn{n,m} -> IO.puts("#{n} has a #{m} membership") end)
 
   end
 
+  def input_user do
+    ip = IO.gets("Enter a number:") |> String.trim()|>String.to_integer()
+    IO.puts( "The entered number #{ip}")
+
+    if Integer.is_even(ip) do
+        IO.puts("even")
+    else
+        IO.puts("Odd")
+      end
+    # r= :rand.uniform(10)    #Generates from 1 to 10
+    # r= :rand.uniform(11)-1  #Generates from 0 to 10
+    # IO.puts(r)
+    end
+
+    def grades do
+      grades=[10,20,30]
+      for n <- grades, do: IO.puts(n)
+      _new= for  m<- grades , do: m * 10
+      grades = grades ++ [40,50] #adding at end
+      grades=[ 5 , 6 | grades] #adding at start
+      IO.inspect(grades)
+    end
 end
