@@ -19,7 +19,16 @@ defmodule Example do
   def shuffle(deck) do
     Enum.shuffle(deck)
   end
+  @doc """
+  It is used to find if the deck contains the given card
 
+  ## Example
+
+
+        iex>deck= Example.create_deck
+        iex>Example.contains?(deck,"One of spade")
+        true
+  """
   def contains?(deck,card) do
     Enum.member?(deck,card)
   end
