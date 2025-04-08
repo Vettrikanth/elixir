@@ -154,4 +154,20 @@ defmodule Example do
       grades=[ 5 , 6 | grades] #adding at start
       IO.inspect(grades)
     end
+
+    def numbers do
+      numbers=[1,2,3,4,5]
+      Enum.each(numbers,fn num->IO.puts(num) end)
+      numbers2=["6","7","8"]
+      r2=Enum.map(numbers2, &String.to_integer/1)
+      IO.inspect(r2)
+      IO.inspect(sum_and_average(r2))
+    end
+
+
+    def sum_and_average(numbers) do
+      sum = Enum.sum(numbers)
+      avg = sum/Enum.count(numbers)
+      {sum,avg}
+    end
 end
