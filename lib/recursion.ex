@@ -62,4 +62,24 @@ defmodule Recursion.SumOfDigits do
     sum(num-1,acc+num)
   end
 
+  #accumalte for list sum aka Tail Recursive
+  def list_sum(num,acc \\0)       #default value of acc set to 0
+  def list_sum([],acc), do: acc   #after iterating list becomes empty so set to return the value
+  def list_sum([h | t],acc) do
+    list_sum(t,acc+h)
+  end
+
+  def reverse_list(list,acc \\[])
+  def reverse_list([],acc), do: acc
+  def reverse_list([h | t ], acc) do
+    reverse_list(t , [h | acc])
+  end
+
+  def map(list,func,acc \\[])
+  def map([],_,acc), do: acc |> Recursion.SumOfDigits.reverse_list()
+  def map([h | t],func,acc) do
+    map(t,func, [func.(h) | acc])
+  end
+
+
 end
