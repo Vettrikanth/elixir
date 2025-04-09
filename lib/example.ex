@@ -170,4 +170,81 @@ defmodule Example do
       avg = sum/Enum.count(numbers)
       {sum,avg}
     end
+    def pin_operator do
+
+      x = 10
+      case 10 do
+        ^x -> "Matched :ok!"    # only matches if it's exactly :ok
+        _ -> "Doesn't match"
+      end
+
+    end
+    def learn_list do
+
+      l1=[11,12,13]
+      IO.puts(Enum.at(l1,0)) #travesing list
+      IO.puts(Enum.at(l1,4, :"not found"))
+
+      IO.puts("")
+      for i<-l1, do:
+      IO.puts(i)
+      IO.puts("")
+
+      values = ["One","Two","Three","Four","Five","Six"]
+      suits= ["spade","club","heart","diamond"]
+
+      cards = for value <- values, suit<-suits do
+        "#{value} of #{suit}"
+      end
+      IO.inspect(cards)
+      IO.puts("")
+
+      IO.inspect(hd(values),label: "Head(1st ele) of Values")
+      IO.inspect(hd(l1),label: "Head(1st ele) of List1")
+
+      IO.inspect(tl(values),label: "Tail of Values")
+      IO.inspect(tl(l1),label: "Tail of List1", charlists: :as_lists) #this will be parsed a ASCII so used charlists to convert
+
+
+      word=[99,97,116]
+      IO.inspect(word)
+      IO.inspect(word, charlists: :as_lists)#this will be parsed a ASCII so used charlists to convert
+
+
+      :ok  end
+
+
+      def learn_tuple do
+
+        t1={1,2,"a",:hii}
+        IO.inspect(t1)
+        {num1,num2,alphabet,atom}=t1
+        IO.inspect(num1)
+        IO.inspect(num2)
+        IO.inspect(alphabet)
+        IO.inspect(atom)
+        {a,b} = {1,2}
+        IO.inspect(a)
+        IO.inspect(b)
+
+        #Keyword list
+
+        data=[a: 1, b: 2]
+        IO.inspect(is_list(data),label: "Data type")
+        IO.inspect(data[:b])
+        IO.inspect([{:a, 1}] = [a: 1]) #key word matching
+
+      :ok end
+
+      def learn_map do
+        my_map = %{a: 1, b: 2 , c: 3 , d: 10}
+        IO.inspect(my_map)
+        my_map = %{my_map | d: 15}
+        IO.inspect(my_map)
+        IO.inspect(my_map.c)
+        %{b: second_element} = my_map
+        IO.inspect(second_element)
+      :ok end
+
+
 end
