@@ -1,0 +1,48 @@
+<div class="container mx-auto p-4">
+  <h1 class="text-2xl font-bold mb-4">Alarm Logs</h1>
+
+  <%= if @error do %>
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      <%= @error %>
+    </div>
+  <% end %>
+
+<div id="download-container" phx-hook="Download">
+  <button
+    phx-click="download_csv"
+    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+  >
+    Download CSV
+  </button>
+</div>
+  <form phx-submit="upload_csv" class="mb-4">
+    <.live_file_input upload={@uploads.csv} />
+    <button
+      type="submit"
+      class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-2"
+    >
+      Upload CSV
+    </button>
+  </form>
+
+  <table class="min-w-full bg-white border">
+    <thead>
+      <tr>
+        <th class="px-4 py-2 border">ID</th>
+        <th class="px-4 py-2 border">Timestamp</th>
+        <th class="px-4 py-2 border">Severity</th>
+        <th class="px-4 py-2 border">Message</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for alarm <- @alarms do %>
+        <tr>
+          <td class="px-4 py-2 border"><%= alarm.id %></td>
+          <td class="px-4 py-2 border"><%= DateTime.to_string(alarm.timestamp) %></td>
+          <td class="px-4 py-2 border"><%= alarm.severity %></td>
+          <td class="px-4 py-2 border"><%= alarm.message %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

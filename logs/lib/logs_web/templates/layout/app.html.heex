@@ -1,0 +1,16 @@
+# lib/logs_web/templates/layout/app.html.heex
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={Plug.CSRFProtection.get_csrf_token()} />
+    <%= @meta_tags %>
+    <title>Logs</title>
+    <link rel="stylesheet" href={~p"/assets/app.css"} />
+    <script defer src={~p"/assets/app.js"}></script>
+  </head>
+  <body>
+    <%= @inner_content %>
+  </body>
+</html>
