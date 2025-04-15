@@ -19,9 +19,10 @@ defmodule HelloWeb.Router do
 
     get "/", PageController, :home
 
-        # Add this line:
-        get "/hello-static", HelloController, :index
+    get "/hello-static", HelloController, :index
+    get "/vettrikanth", VettrikanthController, :index
     live "/hello-live", HelloLive
+    live "/vettri-live", VettriLive
   end
 
   # Other scopes may use custom stacks.
