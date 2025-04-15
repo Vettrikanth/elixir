@@ -1,3 +1,4 @@
+// assets/js/app.js or wherever you define your hooks
 import { Socket } from "phoenix"
 import { LiveSocket } from "phoenix_live_view"
 
@@ -7,14 +8,14 @@ Hooks.Download = {
     console.log("Download hook mounted");
     this.handleEvent("download", ({ data, filename }) => {
       try {
-        console.log("Received download event:", { data, filename });
+        console.log("Received download event:", { filename });
         const blob = new Blob([data], { type: "text/csv;charset=utf-8" });
         console.log("Blob created: size=", blob.size);
         const url = window.URL.createObjectURL(blob);
         console.log("URL created:", url);
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", filename || "data.csv");
+        link.setAttribute("download", filename || "alarm_logs.csv");
         document.body.appendChild(link);
         link.click();
         console.log("Link clicked");

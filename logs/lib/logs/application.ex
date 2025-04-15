@@ -1,23 +1,20 @@
+# lib/logs/application.ex
 defmodule Logs.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
-  @moduledoc false
-
   use Application
 
   @impl true
   def start(_type, _args) do
     children = [
-      LogsWeb.Telemetry,
+      # Start the Ecto repository
       Logs.Repo,
-      {DNSCluster, query: Application.get_env(:logs, :dns_cluster_query) || :ignore},
+      # Start the Telemetry supervisor
+      LogsWeb.Telemetry,
+      # Start the PubSub system
       {Phoenix.PubSub, name: Logs.PubSub},
-      # Start the Finch HTTP client for sending emails
-      {Finch, name: Logs.Finch},
-      # Start a worker by calling: Logs.Worker.start_link(arg)
-      # {Logs.Worker, arg},
-      # Start to serve requests, typically the last entry
+      # Start the Endpoint (http/https)
       LogsWeb.Endpoint
+      # Start a worker by calling: Logs.Worker.start_link(arg)
+      # {Logs.Worker, arg}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

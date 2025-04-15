@@ -1,4 +1,4 @@
-# Create migration: mix ecto.gen.migration create_alarms
+# priv/repo/migrations/20250415112415_create_alarms.exs
 defmodule Logs.Repo.Migrations.CreateAlarms do
   use Ecto.Migration
 
@@ -6,7 +6,7 @@ defmodule Logs.Repo.Migrations.CreateAlarms do
     create table(:alarms) do
       add :timestamp, :utc_datetime, null: false
       add :severity, :string, null: false
-      add :message, :text, null: false
+      add :message, :string, null: false
 
       timestamps()
     end

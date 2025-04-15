@@ -1,3 +1,4 @@
+# lib/logs/repo.ex
 defmodule Logs.Repo do
   use Ecto.Repo,
     otp_app: :logs,

@@ -10,6 +10,7 @@ import Config
 config :logs,
   ecto_repos: [Logs.Repo],
   generators: [timestamp_type: :utc_datetime]
+  
 
 # Configures the endpoint
 config :logs, LogsWeb.Endpoint,

@@ -50,14 +50,27 @@ defmodule LogsWeb do
     end
   end
 
-  def live_view do
-    quote do
-      use Phoenix.LiveView,
-        layout: {LogsWeb.Layouts, :app}
+# Add these functions to your LogsWeb module in lib/logs_web.ex
+# Inside the def live_view section:
 
-      unquote(html_helpers())
+def live_view do
+  quote do
+    use Phoenix.LiveView,
+      layout: {LogsWeb.Layouts, :app}
+
+    unquote(html_helpers())
+
+    # Add this helper function for the template
+    def severity_color_class(severity) do
+      case severity do
+        "high" -> "bg-red-100"
+        "medium" -> "bg-yellow-100"
+        "low" -> "bg-green-100"
+        _ -> ""
+      end
     end
   end
+end
 
   def live_component do
     quote do
