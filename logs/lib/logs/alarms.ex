@@ -13,31 +13,46 @@ defmodule Logs.Alarms do
   end
 
   def from_csv(data) do
+    IO.inspect(data, label: "Incoming data")
+
     try do
-      [headers | rows] = CSV.parse_string(data)
+      parsed_rows =
+        data
+        |> String.replace("\r\n", "\n")  # Normalize line endings to Unix format
+        |> CSV.parse_string()           # Parse the CSV string into rows
+        |> IO.inspect(label: "parsed rows")
+        |> Enum.reject(fn row -> Enum.all?(row, &(&1 == "")) end)  # Remove blank rows
+
+      IO.inspect(parsed_rows, label: "Parsed rows after cleanup")
+
+      # Extract headers (first row) and remaining rows
+# Ensure headers are manually inserted
+headers = ["timestamp", "severity", "message"]
+rows = parsed_rows
+
+IO.inspect(headers, label: "Headers")
+IO.inspect(rows, label: "Rows")
 
       # Check if headers match expected format
-      unless Enum.all?(["id", "timestamp", "severity", "message"], fn expected ->
+      required_headers = ["timestamp", "severity", "message"]
+      unless Enum.all?(required_headers, fn expected ->
         Enum.member?(headers, expected)
       end) do
-        raise "Invalid CSV headers"
+        raise "Invalid CSV headers. Required: timestamp, severity, message"
       end
 
       # Find the position of each column
-      id_pos = Enum.find_index(headers, &(&1 == "id"))
       timestamp_pos = Enum.find_index(headers, &(&1 == "timestamp"))
       severity_pos = Enum.find_index(headers, &(&1 == "severity"))
       message_pos = Enum.find_index(headers, &(&1 == "message"))
 
       parsed = Enum.map(rows, fn row ->
-        id = Enum.at(row, id_pos) |> String.to_integer()
         timestamp_str = Enum.at(row, timestamp_pos)
         {:ok, timestamp, _} = DateTime.from_iso8601(timestamp_str)
         severity = Enum.at(row, severity_pos)
         message = Enum.at(row, message_pos)
 
         %{
-          id: id,
           timestamp: timestamp,
           severity: severity,
           message: message

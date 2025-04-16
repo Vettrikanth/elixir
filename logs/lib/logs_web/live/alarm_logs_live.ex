@@ -11,9 +11,13 @@ defmodule LogsWeb.AlarmLogsLive do
       socket
       |> assign(:alarms, alarms)
       |> assign(:error, nil)
-      |> allow_upload(:csv, accept: ~w(.csv), max_entries: 1)
+      |> allow_upload(:csv, accept: [".csv"], max_entries: 1)
 
     {:ok, socket}
+  end
+  
+  def handle_event("validate", _params, socket) do
+    {:noreply, socket}
   end
 
   def handle_event("download_csv", _params, socket) do
@@ -27,32 +31,56 @@ defmodule LogsWeb.AlarmLogsLive do
     {:noreply, socket}
   end
 
-    def handle_event("upload_csv", _params, socket) do
-      case uploaded_entries(socket, :csv) do
-        [] ->
-          {:noreply, assign(socket, error: "No CSV file provided")}
+  def handle_event("upload_csv", _params, socket) do
+    IO.inspect(socket.assigns.uploads.csv, label: "Uploads state")
 
-        _entries ->
-          consumed = consume_uploaded_entries(socket, :csv, fn meta, _entry ->
-            {:ok, File.read!(meta.path)}
+    case uploaded_entries(socket, :csv) do
+      [] ->
+        IO.inspect("No uploaded entries found", label: "Upload issue")
+        {:noreply, assign(socket, error: "No CSV file provided")}
+
+      entries ->
+        IO.inspect(entries, label: "Entries found")
+
+        # Try a different approach to read the file
+        consumed =
+          consume_uploaded_entries(socket, :csv, fn %{path: path}, _entry ->
+            case File.read(path) do
+              {:ok, binary} ->
+                IO.inspect(byte_size(binary), label: "File size in bytes")
+                {:ok, binary}
+              {:error, reason} ->
+                IO.inspect(reason, label: "File read error")
+                {:error, reason}
+            end
           end)
 
-          case consumed do
-            [csv_data] ->
-              case Logs.Alarm.import_from_csv(csv_data) do
-                {:ok, _results} ->
-                  # Refresh alarms from database
-                  updated_alarms = Logs.Alarm.list_alarms()
-                  {:noreply, assign(socket, alarms: updated_alarms, error: nil)}
+        IO.inspect(consumed, label: "Consumed result")
 
-                {:error, reason} ->
-                  {:noreply, assign(socket, error: "Import failed: #{reason}")}
-              end
+        case consumed do
+          [csv_data] when is_binary(csv_data) ->
+            IO.inspect(byte_size(csv_data), label: "CSV data size")
+            case Logs.Alarm.import_from_csv(csv_data) do
+              {:ok, results} ->
+                IO.inspect(results, label: "Import results")
+                # Refresh alarms from database
+                updated_alarms = Logs.Alarm.list_alarms()
+                {:noreply, assign(socket, alarms: updated_alarms, error: nil)}
 
-            _ ->
-              {:noreply, assign(socket, error: "Error processing uploaded file")}
-          end
-      end
+              {:error, reason} ->
+                IO.inspect(reason, label: "Import error")
+                {:noreply, assign(socket, error: "Import failed: #{reason}")}
+            end
+
+          [{:error, reason}] ->
+            IO.inspect(reason, label: "Consumed error")
+            {:noreply, assign(socket, error: "Error reading file: #{reason}")}
+
+          _ ->
+            IO.inspect("Unexpected consumed result", label: "Consumed unexpected")
+            {:noreply, assign(socket, error: "Error processing uploaded file")}
+        end
     end
+  end
 
   end

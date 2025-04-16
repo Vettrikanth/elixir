@@ -32,6 +32,9 @@ defmodule Logs.Alarm do
   def get_alarm!(id), do: Logs.Repo.get!(__MODULE__, id)
 
   def import_from_csv(csv_data) do
+    IO.puts("🚀 import_from_csv called")
+    IO.inspect(label: "✅ Parsed Alarms")
+
     case Logs.Alarms.from_csv(csv_data) do
       {:ok, alarms} ->
         # Begin transaction
@@ -56,18 +59,24 @@ defmodule Logs.Alarm do
             end
           end)
 
-          # Return results
-          results
+          # Count successful inserts
+          success_count = Enum.count(results, fn
+            {:ok, %Logs.Alarm{}} -> true
+            _ -> false
+          end)
+
+          # Return results summary
+          %{total: length(results), inserted: success_count}
         end)
 
       {:error, reason} ->
         {:error, reason}
     end
   end
-# Add this to lib/logs/alarm.ex
-def clear_all_alarms do
-  Logs.Repo.delete_all(__MODULE__)
-end
+
+  def clear_all_alarms() do
+    Logs.Repo.delete_all(MODULE)
+  end
 
 # Update the seed_mock_alarms function
 def seed_mock_alarms do
