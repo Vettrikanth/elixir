@@ -1,10 +1,9 @@
 # lib/logs_web/live/alarm_logs_live.ex
 defmodule LogsWeb.AlarmLogsLive do
   use LogsWeb, :live_view
-  alias Logs.{Alarm, Alarms}
+  alias Logs.{Alarms}
 
   def mount(_params, _session, socket) do
-    # Get alarms from database only once
     alarms = Logs.Alarm.list_alarms()
 
     socket =
@@ -15,7 +14,7 @@ defmodule LogsWeb.AlarmLogsLive do
 
     {:ok, socket}
   end
-  
+
   def handle_event("validate", _params, socket) do
     {:noreply, socket}
   end
@@ -41,8 +40,6 @@ defmodule LogsWeb.AlarmLogsLive do
 
       entries ->
         IO.inspect(entries, label: "Entries found")
-
-        # Try a different approach to read the file
         consumed =
           consume_uploaded_entries(socket, :csv, fn %{path: path}, _entry ->
             case File.read(path) do
@@ -63,7 +60,6 @@ defmodule LogsWeb.AlarmLogsLive do
             case Logs.Alarm.import_from_csv(csv_data) do
               {:ok, results} ->
                 IO.inspect(results, label: "Import results")
-                # Refresh alarms from database
                 updated_alarms = Logs.Alarm.list_alarms()
                 {:noreply, assign(socket, alarms: updated_alarms, error: nil)}
 

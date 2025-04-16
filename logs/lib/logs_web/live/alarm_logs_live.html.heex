@@ -19,7 +19,7 @@
 <form phx-submit="upload_csv" phx-change="validate">
   <div class="upload-container">
     <.live_file_input upload={@uploads.csv} />
-    <button type="submit" class="btn btn-primary">Upload CSV</button>
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Upload CSV</button>
   </div>
 </form>
 
@@ -28,7 +28,7 @@
   <table class="min-w-full bg-white border">
     <thead class="bg-gray-100">
       <tr>
-        <th class="px-4 py-2 border">ID</th>
+        <%!-- <th class="px-4 py-2 border">ID</th> --%>
         <th class="px-4 py-2 border">Timestamp</th>
         <th class="px-4 py-2 border">Severity</th>
         <th class="px-4 py-2 border">Message</th>
@@ -37,8 +37,8 @@
 <tbody>
   <%= for alarm <- @alarms do %>
     <tr class={severity_color_class(alarm.severity)}>
-      <td class="px-4 py-2 border"><%= alarm.id %></td>
-      <td class="px-4 py-2 border"><%= DateTime.to_string(alarm.timestamp) %></td>
+      <%!-- <td class="px-4 py-2 border"><%= alarm.id %></td> --%>
+      <td class="px-4 py-2 border"><%= Calendar.strftime(alarm.timestamp, "%m/%d/%Y %I:%M %p") %></td>
       <td class="px-4 py-2 border"><%= alarm.severity %></td>
       <td class="px-4 py-2 border"><%= alarm.message %></td>
     </tr>

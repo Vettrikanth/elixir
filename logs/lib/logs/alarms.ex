@@ -4,9 +4,9 @@ defmodule Logs.Alarms do
   # alias Logs.Alarm
 
   def to_csv(alarms) do
-    headers = ["id", "timestamp", "severity", "message"]
+    headers = ["timestamp", "severity", "message"]
     rows = Enum.map(alarms, fn alarm ->
-      [to_string(alarm.id), DateTime.to_string(alarm.timestamp), alarm.severity, alarm.message]
+      [DateTime.to_string(alarm.timestamp), alarm.severity, alarm.message]
     end)
     csv_data = CSV.dump_to_iodata([headers | rows])
     IO.iodata_to_binary(csv_data)
@@ -25,15 +25,12 @@ defmodule Logs.Alarms do
 
       IO.inspect(parsed_rows, label: "Parsed rows after cleanup")
 
-      # Extract headers (first row) and remaining rows
-# Ensure headers are manually inserted
-headers = ["timestamp", "severity", "message"]
-rows = parsed_rows
+      headers = ["timestamp", "severity", "message"]
+      rows = parsed_rows
 
-IO.inspect(headers, label: "Headers")
-IO.inspect(rows, label: "Rows")
+      IO.inspect(headers, label: "Headers")
+      IO.inspect(rows, label: "Rows")
 
-      # Check if headers match expected format
       required_headers = ["timestamp", "severity", "message"]
       unless Enum.all?(required_headers, fn expected ->
         Enum.member?(headers, expected)

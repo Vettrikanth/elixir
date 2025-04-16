@@ -32,12 +32,11 @@ defmodule Logs.Alarm do
   def get_alarm!(id), do: Logs.Repo.get!(__MODULE__, id)
 
   def import_from_csv(csv_data) do
-    IO.puts("🚀 import_from_csv called")
-    IO.inspect(label: "✅ Parsed Alarms")
+    # IO.puts("import_from_csv called")
+    # IO.inspect(label: "Parsed Alarms")
 
     case Logs.Alarms.from_csv(csv_data) do
       {:ok, alarms} ->
-        # Begin transaction
         Logs.Repo.transaction(fn ->
           results = Enum.map(alarms, fn alarm ->
             # Check for duplicates based on timestamp and message
@@ -59,13 +58,11 @@ defmodule Logs.Alarm do
             end
           end)
 
-          # Count successful inserts
           success_count = Enum.count(results, fn
             {:ok, %Logs.Alarm{}} -> true
             _ -> false
           end)
 
-          # Return results summary
           %{total: length(results), inserted: success_count}
         end)
 
@@ -74,21 +71,20 @@ defmodule Logs.Alarm do
     end
   end
 
-  def clear_all_alarms() do
-    Logs.Repo.delete_all(MODULE)
+  def clear_all_alarms do
+    Logs.Repo.delete_all(__MODULE__)
   end
 
-# Update the seed_mock_alarms function
+
 def seed_mock_alarms do
-  # Clear existing data first
   clear_all_alarms()
 
   mock_alarms = [
-    %{timestamp: ~U[2025-04-15 10:00:00Z], severity: "high", message: "Alarm 1: System overload"},
-    %{timestamp: ~U[2025-04-15 09:30:00Z], severity: "medium", message: "Alarm 2: System warning"},
-    %{timestamp: ~U[2025-04-15 09:00:00Z], severity: "low", message: "Alarm 3: System failure"},
-    %{timestamp: ~U[2025-04-15 08:30:00Z], severity: "high", message: "Alarm 4: System overload"},
-    %{timestamp: ~U[2025-04-15 08:00:00Z], severity: "medium", message: "Alarm 5: System warning"},
+    %{timestamp: DateTime.new!(~D[2025-04-15], Time.new!(10, 00, 00), "Etc/UTC"), severity: "high", message: "Alarm 1: System overload"},
+    %{timestamp: DateTime.new!(~D[2025-04-15], Time.new!(9, 30, 00), "Etc/UTC"), severity: "medium", message: "Alarm 2: System warning"},
+    %{timestamp: DateTime.new!(~D[2025-04-15], Time.new!(9, 00, 00), "Etc/UTC"), severity: "low", message: "Alarm 3: System failure"},
+    %{timestamp: DateTime.new!(~D[2025-04-15], Time.new!(8, 30, 00), "Etc/UTC"), severity: "high", message: "Alarm 4: System overload"},
+    %{timestamp: DateTime.new!(~D[2025-04-15], Time.new!(8, 00, 00), "Etc/UTC"), severity: "medium", message: "Alarm 5: System warning"},
   ]
 
   Enum.each(mock_alarms, &create_alarm/1)
