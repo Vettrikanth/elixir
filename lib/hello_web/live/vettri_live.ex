@@ -7,7 +7,7 @@ defmodule HelloWeb.VettriLive do
 
   def render(assigns) do
     ~H"""
-    <h1>Hiii there vettri live</h1>
+    <h1>Hii! there vettri live</h1>
     """
   end
 end
