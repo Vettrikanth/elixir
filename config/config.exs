@@ -7,6 +7,10 @@
 # General application configuration
 import Config
 
+config :hello, HelloWeb.PubSub,
+  name: HelloWeb.PubSub,
+  adapter: Phoenix.PubSub.PG2
+
 config :hello,
   ecto_repos: [Hello.Repo],
   generators: [timestamp_type: :utc_datetime]
@@ -19,7 +23,7 @@ config :hello, HelloWeb.Endpoint,
     formats: [html: HelloWeb.ErrorHTML, json: HelloWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Hello.PubSub,
+  pubsub_server: HelloWeb.PubSub,
   live_view: [signing_salt: "9EaXSE3f"]
 
 # Configures the mailer

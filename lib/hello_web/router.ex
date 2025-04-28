@@ -1,4 +1,9 @@
 defmodule HelloWeb.Router do
+  # alias HelloWeb.TestLive
+  # alias HelloWeb.TestHTML
+  # alias HelloWeb.SidebarLive
+  # alias Phoenix.PubSub
+
   use HelloWeb, :router
 
   pipeline :browser do
@@ -24,8 +29,12 @@ defmodule HelloWeb.Router do
     get "/vettrikanth", VettrikanthController, :index
     live "/hello-live", HelloLive
     live "/vettri-live", VettriLive
-    live "count", CountLive
-    live "cartlive" , CartLive
+    live "/count", CountLive
+    live "/testpub", TestLive
+    live "/cartlive" , CartLive
+    live "/counter", CounterLive
+    live "/sidebar", SidebarLive
+    live "/pubsub-demo", PubSubDemoLive
 
   end
 

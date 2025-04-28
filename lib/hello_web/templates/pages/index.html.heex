@@ -1,0 +1,7 @@
+#index.html.heex
+<div>
+
+<%= live_render(@conn , HelloWeb.CounterLive, session: %{"counter" => @counter}) %>
+<%= live_render(@conn , HelloWeb.SidebarLive, session: %{"counter" => @counter}) %>
+
+</div>
