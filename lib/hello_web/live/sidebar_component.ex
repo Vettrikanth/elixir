@@ -1,44 +1,20 @@
 defmodule HelloWeb.SidebarComponent do
   use Phoenix.LiveComponent
 
-  @topic "counter"
-
   def mount(socket) do
-    IO.inspect(self(), label: "SimpleSidebarComponent PID")
-    case Phoenix.PubSub.subscribe(HelloWeb.PubSub, @topic) do
-      :ok -> IO.inspect("SimpleSidebarComponent subscribed to #{@topic}")
-      error -> IO.inspect(error, label: "SimpleSidebarComponent subscription error")
-    end
+    IO.inspect(self(), label: "SidebarComponent PID")
     {:ok, assign(socket, counter: 0)}
+  end
+
+  # Handle updates sent from the parent LiveView
+  def update(%{counter: counter} = assigns, socket) do
+    IO.inspect(counter, label: "SidebarComponent received update")
+    {:ok, assign(socket, counter: counter)}
   end
 
   def update(assigns, socket) do
     {:ok, assign(socket, assigns)}
   end
-
-  # def handle_info({:counter_updated, counter}, socket) do
-  #   IO.inspect({:received, counter}, label: "SimpleSidebarComponent")
-  #   {:noreply, assign(socket, counter: counter)}
-  # end
-
-  # def mount(socket) do
-  #   {:ok, assign(socket, counter: 0)}
-  # end
-
-  # def update(assigns, socket) do
-  #   {:ok, assign(socket, counter: assigns.counter)}
-  # end
-
-
-  #   def mount(_params, _session, socket) do
-  #   Phoenix.PubSub.subscribe(HelloWeb.PubSub, @topic)
-  #   {:ok, assign(socket, counter: 0)}
-  # end
-
-  # def handle_info({:counter_updated, counter}, socket) do
-  #   IO.inspect({:received, counter}, label: "PubSubDemoLive")
-  #   {:noreply, assign(socket, counter: counter)}
-  # end
 
   def render(assigns) do
     ~H"""

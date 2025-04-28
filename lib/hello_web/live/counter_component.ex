@@ -5,7 +5,6 @@ defmodule HelloWeb.CounterComponent do
 
   def mount(socket) do
     IO.inspect(@topic, label: "counter Topic is")
-    Phoenix.PubSub.subscribe(HelloWeb.PubSub, @topic)
     {:ok, assign(socket, counter: 0)}
   end
 
@@ -35,10 +34,7 @@ defmodule HelloWeb.CounterComponent do
     end
   end
 
-  def handle_info({:counter_updated, counter}, socket) do
-    {:noreply, assign(socket, counter: counter)}
-  end
-
+  # The counter component updates itself directly when handling events
   def render(assigns) do
     ~H"""
     <div class="counter-container">
