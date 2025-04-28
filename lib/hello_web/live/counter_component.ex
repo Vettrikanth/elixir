@@ -4,17 +4,33 @@ defmodule HelloWeb.CounterComponent do
   @topic "counter"
 
   def mount(socket) do
-    IO.inspect(@topic, label: "counter Topic is")
+    # Initialize state
     {:ok, assign(socket, counter: 0)}
+  end
+
+  def update(assigns, socket) do
+    if socket.assigns[:pubsub_initialized] != true do
+      # Subscribe to the PubSub topic only on the first update
+      if connected?(socket) do
+        Phoenix.PubSub.subscribe(HelloWeb.PubSub, @topic)
+        IO.inspect("CounterComponent subscribed to #{@topic}")
+      end
+      {:ok, assign(socket, Map.merge(assigns, %{pubsub_initialized: true}))}
+    else
+      {:ok, assign(socket, assigns)}
+    end
   end
 
   def handle_event("increase_count", _unsigned_params, socket) do
     counter = socket.assigns.counter + 1
     IO.inspect({:broadcasting, counter, @topic}, label: "add button")
+
+    # Broadcast the counter update
     case Phoenix.PubSub.broadcast(HelloWeb.PubSub, @topic, {:counter_updated, counter}) do
       :ok -> IO.inspect("Broadcast successful for counter: #{counter}")
       error -> IO.inspect(error, label: "Broadcast error")
     end
+
     {:noreply, assign(socket, :counter, counter)}
   end
 
@@ -26,15 +42,23 @@ defmodule HelloWeb.CounterComponent do
       _ ->
         counter = counter - 1
         IO.inspect({:broadcasting, counter, @topic}, label: "delete button")
+
+        # Broadcast the counter update
         case Phoenix.PubSub.broadcast(HelloWeb.PubSub, @topic, {:counter_updated, counter}) do
           :ok -> IO.inspect("Broadcast successful for counter: #{counter}")
           error -> IO.inspect(error, label: "Broadcast error")
         end
+
         {:noreply, assign(socket, :counter, counter)}
     end
   end
 
-  # The counter component updates itself directly when handling events
+  # Handle the PubSub messages
+  def handle_info({:counter_updated, counter}, socket) do
+    IO.inspect(counter, label: "CounterComponent received")
+    {:noreply, assign(socket, counter: counter)}
+  end
+
   def render(assigns) do
     ~H"""
     <div class="counter-container">

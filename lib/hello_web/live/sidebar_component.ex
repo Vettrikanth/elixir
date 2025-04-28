@@ -1,19 +1,30 @@
 defmodule HelloWeb.SidebarComponent do
   use Phoenix.LiveComponent
 
+  @topic "counter"
+
   def mount(socket) do
-    IO.inspect(self(), label: "SidebarComponent PID")
+    # Initialize state
     {:ok, assign(socket, counter: 0)}
   end
 
-  # Handle updates sent from the parent LiveView
-  def update(%{counter: counter} = assigns, socket) do
-    IO.inspect(counter, label: "SidebarComponent received update")
-    {:ok, assign(socket, counter: counter)}
+  def update(assigns, socket) do
+    if socket.assigns[:pubsub_initialized] != true do
+      # Subscribe to the PubSub topic only on the first update
+      if connected?(socket) do
+        Phoenix.PubSub.subscribe(HelloWeb.PubSub, @topic)
+        IO.inspect("SidebarComponent subscribed to #{@topic}")
+      end
+      {:ok, assign(socket, Map.merge(assigns, %{pubsub_initialized: true}))}
+    else
+      {:ok, assign(socket, assigns)}
+    end
   end
 
-  def update(assigns, socket) do
-    {:ok, assign(socket, assigns)}
+  # Handle the PubSub messages
+  def handle_info({:counter_updated, counter}, socket) do
+    IO.inspect(counter, label: "SidebarComponent received")
+    {:noreply, assign(socket, counter: counter)}
   end
 
   def render(assigns) do
